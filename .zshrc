@@ -76,7 +76,7 @@ plugins=(
 	pyenv
 	zsh-autosuggestions 
 # 	zsh-autocomplete
-	incr
+	# incr
 # 	zsh-syntax-highlighting
 )
 
