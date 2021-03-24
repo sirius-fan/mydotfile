@@ -12,6 +12,7 @@ export ZSH="/home/sirius/.oh-my-zsh"
 # ZSH_THEME="bureau"
 # ZSH_THEME="amuse"
 ZSH_THEME="ys"
+# ZSH_THEME=random
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
 # a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
@@ -172,5 +173,66 @@ eval "$(pyenv init -)"
 alias set_https_proxy="export https_proxy=\"http://localhost:8889\""
 alias set_http_proxy="export http_proxy=\"http://localhost:8889\""
 
-# 扩展256色
+# 设置setproxy和unsetproxy 可以快捷的开关
+# 需要时先输入命令 setproxy
+# 不需要时输入命令 unsetproxy
+alias set_proxy="export http_proxy=\"socks5://127.0.0.1:1081\"; export http_proxy=\"http://localhost:8889\"; echo 'HTTP Proxy on';"
+alias unsetproxy="unset http_proxy; unset https_proxy; echo 'HTTP Proxy off';"
+
+
+
+alias :q="exit"
+
+
+
+# For fzf 
+alias preview="fzf --preview 'bat --color \"always\" {}'"
+# export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+
+
+# 扩展256色 使用有问题，多显示一行执行的应用
 # export TERM="screen-256color"
+
+
+
+
+# kdesrc-build #################################################################
+
+## Add kdesrc-build to PATH
+export PATH="$HOME/kde/src/kdesrc-build:$PATH"
+
+## Autocomplete for kdesrc-run
+function _comp-kdesrc-run
+{
+  local cur
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+
+  # Complete only the first argument
+  if [[ $COMP_CWORD != 1 ]]; then
+    return 0
+  fi
+
+  # Retrieve build modules through kdesrc-run
+  # If the exit status indicates failure, set the wordlist empty to avoid
+  # unrelated messages.
+  local modules
+  if ! modules=$(kdesrc-run --list-installed);
+  then
+      modules=""
+  fi
+
+  # Return completions that match the current word
+  COMPREPLY=( $(compgen -W "${modules}" -- "$cur") )
+
+  return 0
+}
+
+## Register autocomplete function
+complete -o nospace -F _comp-kdesrc-run kdesrc-run
+
+################################################################################
+
+
