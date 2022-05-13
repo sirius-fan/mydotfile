@@ -16,7 +16,7 @@ endif
 
 Plug 'preservim/nerdtree'                             " 目录树
 
-Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }    " 快速查找
+" Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }    " 快速查找
 Plug 'voldikss/vim-floaterm'                          " 浮动终端
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'rafi/awesome-vim-colorschemes'
@@ -26,10 +26,14 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'luochen1990/rainbow'
 Plug 'preservim/nerdcommenter'             " 快速注释
 Plug 'jiangmiao/auto-pairs'                " 添加括号
-Plug 'gcmt/wildfire.vim'                   "代码块选择工具
+" Plug 'gcmt/wildfire.vim'                   "代码块选择工具
 Plug 'mg979/vim-visual-multi', {'branch': 'master'} "多光标
+Plug 'voldikss/vim-translator'             "translate
+Plug 'terryma/vim-expand-region'           "扩展选区
+Plug 'rust-lang/rust.vim'                  "Rust
+Plug 'chxuan/change-colorscheme'           "快速更改主题
 
-
+Plug 'tpope/vim-rsi'   "插入模式下的readline，Emacs
 
 Plug 'yianwillis/vimcdoc'
 
@@ -110,10 +114,11 @@ language messages zh_CN.utf-8
 "======================airline-config================================
 " 总是显示状态栏
 let laststatus = 2
-let g:airline_powerline_fonts = 1   " 使用powerline打过补丁的字体
+" let g:airline_powerline_fonts = 1   " 使用powerline打过补丁的字体
 " let g:airline_theme="violet"      " 设置主题
 " let g:airline_theme="deus"
 let g:airline_theme="one"
+" let g:airline_theme="silver"
 "开启tabline
 let g:airline#extensions#tabline#enabled = 1
 "tabline中当前buffer两端的分隔字符
@@ -192,17 +197,16 @@ if has("gui_running")
   elseif has("gui_macvim")
     set guifont=Menlo\ Regular:h14
   elseif has("gui_win32")
-    set guifont=DroidSansMono\ NF:h14:cANSI
+    " set guifont=DroidSansMono\ NF:h14:cANSI
+    set guifontwide=黑体:h14    
+    set guifont=Fira\ Code:h14:cANSI
     map <F11> :call libcallnr("gvimtogglefullscreen.dll", "toggle_full_screen", 0)<CR>
     " map <F11> :call libcallnr("gvimtogglefullscreen.dll", "toggle_full_screen", 0)<CR><ESC>:set guioptions-=m<cr>
-
 
     " toggle fullscreen mode by pressing F11
     " noremap <f11> <esc>:call libcallnr('gvim_fullscreen.dll', 'ToggleFullscreen', 0)<cr>:set guioptions-=TrLm<cr>
     " toggle window transparency to 247 or 180 by pressing F12
-    noremap <f12> <esc>:call libcallnr('gvim_fullscreen.dll', 'ToggleTransparency', "247,180")<cr>
-    "set guifont=MesloLGL\ NF:h13:cANSI
-    "set guifont=MesloLGM\ NF:h13:cANSI
+    noremap <f12> <esc>:call libcallnr('gvim_fullscreen.dll', 'ToggleTransparency', "247,200")<cr>
   endif
 endif
 "======================================================================
@@ -419,6 +423,27 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 "=======================================================================================
 
+"========================================================
+"Mode Settings
+
+let &t_SI.="\e[5 q" "SI = INSERT mode
+let &t_SR.="\e[4 q" "SR = REPLACE mode
+let &t_EI.="\e[1 q" "EI = NORMAL mode (ELSE)
+
+"Cursor settings:
+
+"  1 -> blinking block
+"  2 -> solid block
+"  3 -> blinking underscore
+"  4 -> solid underscore
+"  5 -> blinking vertical bar
+"  6 -> solid vertical bar
+
+
+"let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+"let &t_SR = "\<Esc>]50;CursorShape=2\x7"
+"let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+"====================================================
 
 
 "=========================other=============================
@@ -435,7 +460,8 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
 " 解决插入模式下delete/backspce键失效问题
 set backspace=2
-
+" 能使用鼠标交互
+set mouse=a
 
 set number "显示行号
 
@@ -446,11 +472,63 @@ set clipboard+=unnamed
 nnoremap [b :bp<CR>
 nnoremap ]b :bn<CR>
 
-" 清空缓冲区 关闭buffer  还可以使用 ctrl-shift-q 激活块选
+" 清空缓冲区 关闭buffer  还可以使用 ctrl-v 块选择
 nmap <C-q> :bwipe<CR>
+
+
 set t_Co=256
 set lazyredraw
 
 
+" 设置历史命令数目(手动设置？)
+set history=1000
+
+" 设置符号可视
+" set invlist
+
+" set paste
+
 " set nocompatible
 " The character which starts command-line completion defaults to Tab only when nocompatible is set. In Vi compatible mode it's CTRL-E
+
+
+" exit all
+:command -nargs=0 Q :qall
+
+
+" 主题切换
+nnoremap <silent> <F10> :NextColorScheme<cr>
+
+"float terminal
+" let g:floaterm_keymap_new    = '<F7>'
+" let g:floaterm_keymap_prev   = '<F8>'
+" let g:floaterm_keymap_next   = '<F9>'
+let g:floaterm_keymap_toggle = '<F9>'
+" Close window if the job exits normally, otherwise stay it with messages like [Process exited 101]
+let g:floaterm_autoclose = 2 
+if has("win32")
+  let g:floaterm_shell = 'pwsh'
+endif
+"命令提示
+set wildmode=list:longest,full
+
+
+" https://www.zhihu.com/question/19643925
+" 插入模式下
+" Ctrl + H 光标移当前行行首
+imap <c-h> <ESC>I
+" Ctrl + J 光标移下一行行首
+imap <c-j> <ESC><Down>I
+" Ctrl + K 光标移上一行行尾
+imap <c-k> <ESC><Up>A
+" Ctrl + L 光标移当前行行尾
+imap <c-l> <ESC>A
+" Alt + H 光标左移一格
+imap <m-h> <Left>
+" Alt + J 光标下移一格
+imap <m-j> <Down>
+" Alt + K 光标上移一格
+imap <m-k> <Up>
+" Alt + L 光标右移一格
+imap <m-l> <Right>
+
