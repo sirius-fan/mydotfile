@@ -31,7 +31,7 @@ Plug 'mg979/vim-visual-multi', {'branch': 'master'} "多光标
 Plug 'voldikss/vim-translator'             "translate
 Plug 'terryma/vim-expand-region'           "扩展选区
 Plug 'rust-lang/rust.vim'                  "Rust
-Plug 'chxuan/change-colorscheme'           "快速更改主题
+Plug 'sirius-fan/change-colorscheme'           "快速更改主题
 
 Plug 'tpope/vim-rsi'   "插入模式下的readline，Emacs
 
