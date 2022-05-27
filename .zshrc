@@ -1,6 +1,7 @@
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
 
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
+source $HOME/.zprofile
+source ~/.profile
 # Path to your oh-my-zsh installation.
 export ZSH="/home/sirius/.oh-my-zsh"
 
@@ -72,9 +73,9 @@ ZSH_THEME="ys"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-	git 
+	# git 
 # 	autojump 
-	pyenv
+	# pyenv
 	zsh-autosuggestions 
 # 	zsh-autocomplete
 	# incr
@@ -117,15 +118,9 @@ alias zshconfig="vim ~/.zshrc"
 # source ~/.oh-my-zsh/custom/plugins/autojump/bin/autojump.zsh
 
 
-
-# python
-# alias pyenv="source .py3env/bin/activate"
-
-
-
 # downvideo
 alias youdown='youtube-dl --external-downloader aria2c --external-downloader-args "-x 8 -k 1M" '
-alias youdown_proxy='youtube-dl --proxy "http://127.0.0.1:9000" --external-downloader aria2c --external-downloader-args "-x 8 -k 1M" '
+alias youdown_proxy='youtube-dl --proxy "http://127.0.0.1:8889" --external-downloader aria2c --external-downloader-args "-x 8 -k 1M" '
 
 
 # npm
@@ -138,13 +133,6 @@ export PATH="${PATH}:${HOME}/.npm_packages/bin"
 
 
 alias webGet="wget  -r -c -np -nH --cut-dirs 2 --restrict-file-names=nocontrol  "
-
-# pip
-alias pipup= "pip3 install  --upgrade"
-
-# cuda
-# export  PATH=/opt/cuda/bin:$PATH
-# export  LD_LIBRARY_PATH=/opt/cuda/lib64$LD_LIBRARY_PATH
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -161,29 +149,31 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
+
 alias ml38="conda activate exp38"
 
 
 # pyenv
-export PATH=~/.pyenv/bin:$PATH
+# export PATH=~/.pyenv/bin:$PATH
 export PYENV_ROOT=~/.pyenv
 eval "$(pyenv init -)"
 
+
 # proxy
-alias set_https_proxy="export https_proxy=\"http://localhost:8889\""
-alias set_http_proxy="export http_proxy=\"http://localhost:8889\""
+alias set_all_proxy="export ALL_PROXY=\"socks5://127.0.0.1:1090\""
 
 # 设置setproxy和unsetproxy 可以快捷的开关
 # 需要时先输入命令 setproxy
 # 不需要时输入命令 unsetproxy
-alias set_proxy="export http_proxy=\"socks5://127.0.0.1:1081\"; export http_proxy=\"http://localhost:8889\"; echo 'HTTP Proxy on';"
+alias set_proxy="export http_proxy=\"socks5://127.0.0.1:1080\"; export http_proxy=\"socks5://localhost:1080\"; echo 'HTTP Proxy on';"
 alias unsetproxy="unset http_proxy; unset https_proxy; echo 'HTTP Proxy off';"
 
 
 
 alias :q="exit"
+alias pxng="proxychains4 -q -f /home/sirius/.config/proxychains.conf"
 
-
+alias get_ip="curl cip.cc"
 
 # For fzf 
 alias preview="fzf --preview 'bat --color \"always\" {}'"
@@ -191,48 +181,8 @@ alias preview="fzf --preview 'bat --color \"always\" {}'"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 
+# export CARGO_HTTP_PROXY="socks5://127.0.0.1:1080"
 
 # 扩展256色 使用有问题，多显示一行执行的应用
 # export TERM="screen-256color"
-
-
-
-
-# kdesrc-build #################################################################
-
-## Add kdesrc-build to PATH
-export PATH="$HOME/kde/src/kdesrc-build:$PATH"
-
-## Autocomplete for kdesrc-run
-function _comp-kdesrc-run
-{
-  local cur
-  COMPREPLY=()
-  cur="${COMP_WORDS[COMP_CWORD]}"
-
-  # Complete only the first argument
-  if [[ $COMP_CWORD != 1 ]]; then
-    return 0
-  fi
-
-  # Retrieve build modules through kdesrc-run
-  # If the exit status indicates failure, set the wordlist empty to avoid
-  # unrelated messages.
-  local modules
-  if ! modules=$(kdesrc-run --list-installed);
-  then
-      modules=""
-  fi
-
-  # Return completions that match the current word
-  COMPREPLY=( $(compgen -W "${modules}" -- "$cur") )
-
-  return 0
-}
-
-## Register autocomplete function
-complete -o nospace -F _comp-kdesrc-run kdesrc-run
-
-################################################################################
-
-
+xset -b
